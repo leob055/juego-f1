@@ -3,78 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Carrera F1</title>
+<title>Carrera Especial</title>
+
 <style>
-body {
+body{
+  margin:0;
   font-family: Arial, sans-serif;
-  text-align: center;
-  background: #111;
-  color: white;
+  background:#0b0b0b;
+  color:white;
+  text-align:center;
 }
 
-h1 {
-  margin-top: 10px;
+h1{
+  margin-top:15px;
 }
 
-#game {
-  position: relative;
-  width: 90%;
-  max-width: 400px;
-  height: 200px;
-  margin: 20px auto;
-  background: #222;
-  border: 3px solid white;
-  overflow: hidden;
+#game{
+  position:relative;
+  width:95%;
+  max-width:420px;
+  height:220px;
+  margin:20px auto;
+  background:linear-gradient(#2b2b2b,#1a1a1a);
+  border:4px solid white;
+  overflow:hidden;
+  border-radius:12px;
 }
 
-#car {
-  position: absolute;
-  left: 10px;
-  top: 80px;
-  font-size: 40px;
+.track-line{
+  position:absolute;
+  width:100%;
+  height:4px;
+  background:white;
+  top:50%;
+  opacity:0.3;
 }
 
-#finish {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 10px;
-  height: 100%;
-  background: white;
+#car{
+  position:absolute;
+  left:10px;
+  top:90px;
+  font-size:40px;
+  transition: left 0.2s;
 }
 
-button {
-  padding: 15px 25px;
-  font-size: 18px;
-  margin-top: 10px;
+#finish{
+  position:absolute;
+  right:0;
+  width:12px;
+  height:100%;
+  background:repeating-linear-gradient(
+    45deg,
+    white,
+    white 10px,
+    black 10px,
+    black 20px
+  );
+}
+
+#hud{
+  margin-top:10px;
+  font-size:18px;
+}
+
+#startBtn{
+  padding:14px 22px;
+  font-size:18px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
 }
 </style>
 </head>
+
 <body>
 
-<h1>🏎️ Carrera Especial</h1>
-<p>Toca el botón para acelerar</p>
+<h1>🏁 Mini Carrera F1</h1>
+<p>Toca la pantalla para acelerar</p>
 
 <div id="game">
+  <div class="track-line"></div>
   <div id="car">🏎️</div>
   <div id="finish"></div>
 </div>
 
-<button onclick="accelerate()">Acelerar</button>
+<div id="hud">
+Tiempo: <span id="time">0.0</span>s
+</div>
+
+<br>
+<button id="startBtn">Iniciar Carrera</button>
 
 <p id="message"></p>
 
 <script>
 let position = 10;
-const finish = 340;
+let gameRunning = false;
+let startTime;
 
-function accelerate() {
-  position += 20;
-  document.getElementById("car").style.left = position + "px";
+const car = document.getElementById("car");
+const message = document.getElementById("message");
+const timeText = document.getElementById("time");
+const finish = 360;
 
-  if (position >= finish) {
-    document.getElementById("message").innerText =
-      "Ganaste la carrera 🏁 Ahora te invito a ver una carrera de F1 conmigo 😉";
+document.getElementById("startBtn").onclick = startGame;
+
+function startGame(){
+  position = 10;
+  car.style.left = position + "px";
+  message.innerText = "";
+  gameRunning = true;
+  startTime = Date.now();
+}
+
+document.addEventListener("touchstart", accelerate);
+document.addEventListener("click", accelerate);
+
+function accelerate(){
+  if(!gameRunning) return;
+
+  position += 18;
+  car.style.left = position + "px";
+
+  let time = ((Date.now() - startTime)/1000).toFixed(2);
+  timeText.innerText = time;
+
+  if(position >= finish){
+    gameRunning = false;
+    message.innerHTML =
+    "🏆 Ganaste la carrera!<br><br>Ahora el premio es salir conmigo a ver F1 😉";
   }
 }
 </script>
