@@ -51,6 +51,19 @@ padding:20px;
 box-shadow:0 15px 40px rgba(0,0,0,.5);
 }
 
+/* INSTRUCCIONES */
+
+.instructions{
+background:#020617;
+border:1px solid #334155;
+border-radius:12px;
+padding:12px;
+font-size:14px;
+margin-bottom:12px;
+text-align:left;
+line-height:1.4;
+}
+
 /* LIGHTS */
 
 .lights{
@@ -124,8 +137,14 @@ font-size:36px;
 transition:left .12s linear;
 }
 
-#player{top:70px}
-#ai{top:130px}
+#player{
+top:70px;
+filter:hue-rotate(-10deg) saturate(2) brightness(1.1);
+}
+
+#ai{
+top:130px;
+}
 
 /* BUTTON */
 
@@ -164,7 +183,7 @@ text-align:center;
 overflow:hidden;
 }
 
-/* BANDERAS A CUADROS */
+/* BANDERAS */
 
 .flags{
 position:absolute;
@@ -196,7 +215,7 @@ padding:30px;
 border-radius:20px;
 max-width:320px;
 box-shadow:0 20px 60px rgba(0,0,0,.4);
-animation:pop 0.6s ease;
+animation:pop .6s ease;
 }
 
 @keyframes pop{
@@ -230,6 +249,14 @@ Race Weekend
 
 <h2>🏎️ Carrera contra mí</h2>
 
+<div class="instructions" id="instructions">
+<b>Cómo jugar:</b><br>
+1️⃣ Presiona <b>Iniciar carrera</b><br>
+2️⃣ Espera a que se apaguen las luces 🔴<br>
+3️⃣ Toca la pista muchas veces para acelerar<br>
+4️⃣ Gana la carrera antes que yo 😏
+</div>
+
 <div class="lights">
 <div class="light"></div>
 <div class="light"></div>
@@ -242,7 +269,7 @@ Race Weekend
 <div class="track"></div>
 
 <div id="player" class="car">🏎️</div>
-<div id="ai" class="car">🔵🏎️</div>
+<div id="ai" class="car">🏎️</div>
 
 <div class="finish"></div>
 </div>
@@ -274,7 +301,7 @@ Race Weekend
 </div>
 
 <script>
-const nombre="Fernanda";
+const nombre="Mi Vida";
 
 let playerPos,aiPos;
 let running=false;
@@ -309,6 +336,7 @@ osc.stop(ctx.currentTime+0.07);
 /* START */
 
 function startRace(){
+document.getElementById("instructions").style.display="none";
 startLights();
 }
 
@@ -387,7 +415,7 @@ const msg=document.getElementById("finalMessage");
 
 if(win){
 msg.innerHTML=
-"<b>"+nombre+"</b>, ganaste la carrera 💗<br><br>Ahora me debes ir a ver una carrera de F1 conmigo 🏎️";
+"<b>"+nombre+"</b>, ganaste la carrera 💗<br><br> ahora me debes una cita con el vestido rojo!! 🏎️";
 }else{
 msg.innerHTML=
 "Casi ganamos 😅<br><br>Pero igual quiero invitarte a ver F1 conmigo 💗";
