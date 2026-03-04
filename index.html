@@ -8,54 +8,95 @@
 <style>
 body{
   margin:0;
-  font-family: Arial, sans-serif;
-  text-align:center;
+  font-family: system-ui, -apple-system, Arial;
+  background: linear-gradient(135deg,#0f172a,#020617);
   color:white;
-  background:#111;
+  text-align:center;
+}
+
+.container{
+  max-width:430px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:#0b1220;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
 h1{
-  margin-top:15px;
+  margin:10px 0 5px;
+  font-size:24px;
 }
+
+.subtitle{
+  opacity:.7;
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+/* SEMAFORO F1 */
+
+.lights{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:10px 0 15px;
+}
+
+.light{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#330000;
+  box-shadow:0 0 10px rgba(0,0,0,0.6) inset;
+}
+
+.light.on{
+  background:red;
+  box-shadow:0 0 10px red;
+}
+
+/* GAME */
 
 #game{
   position:relative;
-  width:95%;
-  max-width:420px;
-  height:220px;
-  margin:20px auto;
+  height:200px;
   border-radius:12px;
   overflow:hidden;
-  border:4px solid white;
-  background-image:url("https://upload.wikimedia.org/wikipedia/commons/7/7a/Start_grid_Silverstone_2014.jpg");
-  background-size:cover;
-  background-position:center;
+  border:2px solid #334155;
+  background:#111;
 }
 
-.overlay{
+/* EFECTO VELOCIDAD */
+
+.track{
   position:absolute;
   inset:0;
-  background:rgba(0,0,0,0.55);
+  background:
+    repeating-linear-gradient(
+      to right,
+      #222 0px,
+      #222 40px,
+      #2f2f2f 40px,
+      #2f2f2f 80px
+    );
+  animation: moveTrack 1s linear infinite;
+  opacity:.6;
 }
 
-.car{
+@keyframes moveTrack{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-80px); }
+}
+
+.finish{
   position:absolute;
-  font-size:34px;
-  transition:left 0.15s linear;
-}
-
-#player{
-  top:80px;
-}
-
-#ai{
-  top:140px;
-}
-
-#finish{
-  position:absolute;
-  left:10px;
-  width:14px;
+  left:8px;
+  width:16px;
   height:100%;
   background: repeating-linear-gradient(
     45deg,
@@ -66,30 +107,53 @@ h1{
   );
 }
 
-#countdown{
-  font-size:40px;
-  font-weight:bold;
+/* AUTOS */
+
+.car{
+  position:absolute;
+  font-size:34px;
+  transition:left .15s linear;
 }
 
-button{
-  padding:14px 24px;
-  font-size:18px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
+#player{ top:70px; }
+#ai{ top:130px; }
+
+/* COLORES EQUIPOS */
+
+.redbull{
+  filter:hue-rotate(200deg) saturate(1.3);
 }
+
+.ferrari{
+  filter:hue-rotate(-20deg) saturate(1.5);
+}
+
+/* BOTON */
+
+button{
+  margin-top:15px;
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-weight:600;
+}
+
+/* FINAL SCREEN */
 
 #finalScreen{
   display:none;
   position:fixed;
   inset:0;
-  background:#ff4fa3;
+  background:linear-gradient(135deg,#ff4fa3,#ff7ac6);
   color:white;
-  font-size:28px;
-  font-weight:bold;
   justify-content:center;
   align-items:center;
   text-align:center;
+  font-size:26px;
   padding:30px;
 }
 </style>
@@ -97,79 +161,83 @@ button{
 
 <body>
 
+<div class="container">
+<div class="card">
+
 <h1>🏁 Carrera de F1</h1>
-<div id="countdown">Presiona iniciar</div>
+<div class="subtitle">Toca la pantalla para acelerar</div>
+
+<div class="lights" id="lights">
+<div class="light"></div>
+<div class="light"></div>
+<div class="light"></div>
+<div class="light"></div>
+<div class="light"></div>
+</div>
 
 <div id="game">
-  <div class="overlay"></div>
+<div class="track"></div>
 
-  <div id="player" class="car">🏎️</div>
-  <div id="ai" class="car">🏎️</div>
+<div id="player" class="car redbull">🏎️</div>
+<div id="ai" class="car ferrari">🏎️</div>
 
-  <div id="finish"></div>
+<div class="finish"></div>
 </div>
 
 <button onclick="startRace()">Iniciar carrera</button>
+
+</div>
+</div>
 
 <div id="finalScreen"></div>
 
 <script>
 const nombre = "Valeria";
 
-let gameRunning = false;
 let playerPos;
 let aiPos;
-let finish = 20;
+let gameRunning=false;
+let finish=20;
+const width=380;
 
-let engineContext;
-
-const player = document.getElementById("player");
-const ai = document.getElementById("ai");
-const gameWidth = 380;
-
-function engineSound(){
-  if(!engineContext){
-    engineContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
-
-  const osc = engineContext.createOscillator();
-  const gain = engineContext.createGain();
-
-  osc.type = "sawtooth";
-  osc.frequency.value = 140 + Math.random()*100;
-
-  gain.gain.value = 0.05;
-
-  osc.connect(gain);
-  gain.connect(engineContext.destination);
-
-  osc.start();
-  osc.stop(engineContext.currentTime + 0.08);
-}
+const player=document.getElementById("player");
+const ai=document.getElementById("ai");
 
 function startRace(){
-  playerPos = gameWidth;
-  aiPos = gameWidth;
+  resetLights();
+  startLightsSequence();
+}
 
-  player.style.left = playerPos + "px";
-  ai.style.left = aiPos + "px";
+function resetLights(){
+  document.querySelectorAll(".light").forEach(l=>l.classList.remove("on"));
+}
 
-  let count = 3;
-  document.getElementById("countdown").innerText = count;
+function startLightsSequence(){
+  const lights=document.querySelectorAll(".light");
+  let i=0;
 
-  const interval = setInterval(()=>{
-    count--;
-    if(count > 0){
-      document.getElementById("countdown").innerText = count;
-    } else if(count === 0){
-      document.getElementById("countdown").innerText = "GO!";
-    } else {
+  const interval=setInterval(()=>{
+    lights[i].classList.add("on");
+    i++;
+
+    if(i===lights.length){
       clearInterval(interval);
-      document.getElementById("countdown").innerText = "Toca la pantalla para acelerar";
-      gameRunning = true;
-      aiMove();
+      setTimeout(startRaceNow,700);
     }
-  },1000);
+  },400);
+}
+
+function startRaceNow(){
+  document.querySelectorAll(".light").forEach(l=>l.classList.remove("on"));
+
+  playerPos=width;
+  aiPos=width;
+
+  player.style.left=playerPos+"px";
+  ai.style.left=aiPos+"px";
+
+  gameRunning=true;
+  aiMove();
 }
 
 document.addEventListener("touchstart", accelerate);
@@ -178,46 +246,44 @@ document.addEventListener("click", accelerate);
 function accelerate(){
   if(!gameRunning) return;
 
-  playerPos -= 18;
-  engineSound();
-  player.style.left = playerPos + "px";
+  playerPos-=20;
+  player.style.left=playerPos+"px";
   checkWin();
 }
 
 function aiMove(){
-  const aiInterval = setInterval(()=>{
+  const aiInterval=setInterval(()=>{
     if(!gameRunning){
       clearInterval(aiInterval);
       return;
     }
 
-    aiPos -= Math.random()*14;
-    ai.style.left = aiPos + "px";
+    aiPos-=Math.random()*16;
+    ai.style.left=aiPos+"px";
     checkWin();
-  },200);
+  },180);
 }
 
 function checkWin(){
-  if(playerPos <= finish){
+  if(playerPos<=finish){
     endGame(true);
   }
-
-  if(aiPos <= finish){
+  if(aiPos<=finish){
     endGame(false);
   }
 }
 
-function endGame(playerWin){
-  gameRunning = false;
+function endGame(win){
+  gameRunning=false;
 
-  const screen = document.getElementById("finalScreen");
-  screen.style.display = "flex";
+  const screen=document.getElementById("finalScreen");
+  screen.style.display="flex";
 
-  if(playerWin){
-    screen.innerHTML =
-    "🏁 "+nombre+" ganaste mi carrera favorita.<br><br>¿Salimos a ver una carrera de F1 juntos? 💗";
-  } else {
-    screen.innerHTML =
+  if(win){
+    screen.innerHTML=
+    "🏁 "+nombre+" ganaste mi carrera favorita.<br><br>¿Salimos a ver F1 juntos? 💗";
+  }else{
+    screen.innerHTML=
     nombre+" casi ganamos 😅<br><br>pero igual quiero invitarte a ver F1 conmigo 💗";
   }
 }
