@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carrera F1</title>
+<title>Mini F1 Game</title>
 
 <style>
 body{
@@ -24,7 +24,7 @@ display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-font-size:32px;
+font-size:30px;
 letter-spacing:3px;
 animation:introAnim 2.5s forwards;
 z-index:10;
@@ -68,7 +68,7 @@ font-weight:600;
 }
 
 .ferrari{background:#dc2626}
-.redbull{background:#2563eb}
+.redbull{background:#1d4ed8}
 
 .team.selected{
 outline:3px solid white;
@@ -141,7 +141,7 @@ black 20px
 
 .car{
 position:absolute;
-font-size:36px;
+font-size:34px;
 transition:left .12s linear;
 }
 
@@ -221,8 +221,8 @@ Race Weekend
 <h2>Elige tu equipo</h2>
 
 <div class="teams">
-<div class="team ferrari selected">Ferrari</div>
-<div class="team redbull">Red Bull</div>
+<div class="team ferrari" onclick="selectTeam('ferrari')" id="teamFerrari">Ferrari</div>
+<div class="team redbull" onclick="selectTeam('redbull')" id="teamRedbull">Red Bull</div>
 </div>
 
 <div class="lights">
@@ -235,10 +235,8 @@ Race Weekend
 
 <div id="game">
 <div class="track"></div>
-
-<div id="player" class="car ferrari">🏎️</div>
-<div id="ai" class="car redbull">🏎️</div>
-
+<div id="player" class="car">🏎️</div>
+<div id="ai" class="car">🏎️</div>
 <div class="finish"></div>
 </div>
 
@@ -260,8 +258,9 @@ Race Weekend
 </div>
 
 <script>
-const nombre="Fernanda";
+const nombre="Valeria";
 
+let team="ferrari";
 let playerPos,aiPos;
 let running=false;
 let startTime;
@@ -271,6 +270,15 @@ const finish=20;
 
 const player=document.getElementById("player");
 const ai=document.getElementById("ai");
+
+/* TEAM SELECT */
+
+function selectTeam(t){
+team=t;
+document.querySelectorAll(".team").forEach(e=>e.classList.remove("selected"));
+document.getElementById("teamFerrari").classList.toggle("selected",t==="ferrari");
+document.getElementById("teamRedbull").classList.toggle("selected",t==="redbull");
+}
 
 /* ENGINE SOUND */
 
@@ -373,10 +381,10 @@ const msg=document.getElementById("finalMessage");
 
 if(win){
 msg.innerHTML=
-"<b>Fernanda</b>, ganaste mi carrera favorita 💗<br><br>Ahora me debes ir a ver una carrera de F1 conmigo 🏎️";
+"<b>"+nombre+"</b>, ganaste la carrera 💗<br><br>Ahora me debes ir a ver una carrera de F1 conmigo 🏎️";
 }else{
 msg.innerHTML=
-"Fernanda casi ganamos 😅<br><br>Pero igual quiero invitarte a ver F1 conmigo 💗";
+"Casi ganamos 😅<br><br>Pero igual quiero invitarte a ver F1 conmigo 💗";
 }
 
 loadTimes();
