@@ -40,18 +40,21 @@ h1{
 
 .car{
   position:absolute;
-  right:10px;
-  font-size:32px;
-  transition:right 0.15s linear;
+  font-size:34px;
+  transition:left 0.15s linear;
 }
 
-#car1{ top:60px; }
-#car2{ top:100px; }
-#car3{ top:140px; }
+#player{
+  top:80px;
+}
+
+#ai{
+  top:140px;
+}
 
 #finish{
   position:absolute;
-  left:0;
+  left:10px;
   width:14px;
   height:100%;
   background: repeating-linear-gradient(
@@ -66,7 +69,6 @@ h1{
 #countdown{
   font-size:40px;
   font-weight:bold;
-  margin-top:10px;
 }
 
 button{
@@ -77,9 +79,18 @@ button{
   cursor:pointer;
 }
 
-#message{
-  font-size:20px;
-  margin-top:10px;
+#finalScreen{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#ff4fa3;
+  color:white;
+  font-size:28px;
+  font-weight:bold;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:30px;
 }
 </style>
 </head>
@@ -92,27 +103,29 @@ button{
 <div id="game">
   <div class="overlay"></div>
 
-  <div id="car1" class="car">🏎️</div>
-  <div id="car2" class="car">🏎️</div>
-  <div id="car3" class="car">🏎️</div>
+  <div id="player" class="car">🏎️</div>
+  <div id="ai" class="car">🏎️</div>
 
   <div id="finish"></div>
 </div>
 
 <button onclick="startRace()">Iniciar carrera</button>
 
-<p id="message"></p>
+<div id="finalScreen"></div>
 
 <script>
 const nombre = "Valeria";
 
 let gameRunning = false;
-let playerPos = 10;
-let ai1 = 10;
-let ai2 = 10;
-let finish = 360;
+let playerPos;
+let aiPos;
+let finish = 20;
 
 let engineContext;
+
+const player = document.getElementById("player");
+const ai = document.getElementById("ai");
+const gameWidth = 380;
 
 function engineSound(){
   if(!engineContext){
@@ -123,7 +136,7 @@ function engineSound(){
   const gain = engineContext.createGain();
 
   osc.type = "sawtooth";
-  osc.frequency.value = 120 + Math.random()*90;
+  osc.frequency.value = 140 + Math.random()*100;
 
   gain.gain.value = 0.05;
 
@@ -135,11 +148,11 @@ function engineSound(){
 }
 
 function startRace(){
-  playerPos = 10;
-  ai1 = 10;
-  ai2 = 10;
+  playerPos = gameWidth;
+  aiPos = gameWidth;
 
-  updateCars();
+  player.style.left = playerPos + "px";
+  ai.style.left = aiPos + "px";
 
   let count = 3;
   document.getElementById("countdown").innerText = count;
@@ -165,9 +178,9 @@ document.addEventListener("click", accelerate);
 function accelerate(){
   if(!gameRunning) return;
 
-  playerPos += 18;
+  playerPos -= 18;
   engineSound();
-  updateCars();
+  player.style.left = playerPos + "px";
   checkWin();
 }
 
@@ -178,37 +191,37 @@ function aiMove(){
       return;
     }
 
-    ai1 += Math.random()*12;
-    ai2 += Math.random()*14;
-
-    updateCars();
+    aiPos -= Math.random()*14;
+    ai.style.left = aiPos + "px";
     checkWin();
   },200);
 }
 
-function updateCars(){
-  document.getElementById("car1").style.right = playerPos + "px";
-  document.getElementById("car2").style.right = ai1 + "px";
-  document.getElementById("car3").style.right = ai2 + "px";
-}
-
 function checkWin(){
-  if(playerPos >= finish){
-    gameRunning = false;
-    document.getElementById("message").innerHTML =
-    "🏆 "+nombre+" ganaste la carrera.<br>Ahora toca ver una F1 juntos 😉";
+  if(playerPos <= finish){
+    endGame(true);
   }
 
-  if(ai1 >= finish || ai2 >= finish){
-    gameRunning = false;
-    document.getElementById("message").innerHTML =
-    "Casi ganamos 😅 revancha conmigo "+nombre;
+  if(aiPos <= finish){
+    endGame(false);
+  }
+}
+
+function endGame(playerWin){
+  gameRunning = false;
+
+  const screen = document.getElementById("finalScreen");
+  screen.style.display = "flex";
+
+  if(playerWin){
+    screen.innerHTML =
+    "🏁 "+nombre+" ganaste mi carrera favorita.<br><br>¿Salimos a ver una carrera de F1 juntos? 💗";
+  } else {
+    screen.innerHTML =
+    nombre+" casi ganamos 😅<br><br>pero igual quiero invitarte a ver F1 conmigo 💗";
   }
 }
 </script>
-
-</body>
-</html>
 
 </body>
 </html>
