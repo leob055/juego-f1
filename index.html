@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carrera Especial</title>
+<title>Carrera F1 Especial</title>
 
 <style>
 body{
   margin:0;
   font-family: Arial, sans-serif;
-  background:#0b0b0b;
-  color:white;
   text-align:center;
+  color:white;
+  background:#111;
 }
 
 h1{
@@ -24,35 +24,38 @@ h1{
   max-width:420px;
   height:220px;
   margin:20px auto;
-  background:linear-gradient(#2b2b2b,#1a1a1a);
-  border:4px solid white;
-  overflow:hidden;
   border-radius:12px;
+  overflow:hidden;
+  border:4px solid white;
+
+  background-image:url("https://upload.wikimedia.org/wikipedia/commons/7/7a/Start_grid_Silverstone_2014.jpg");
+  background-size:cover;
+  background-position:center;
 }
 
-.track-line{
+.overlay{
   position:absolute;
-  width:100%;
-  height:4px;
-  background:white;
-  top:50%;
-  opacity:0.3;
+  inset:0;
+  background:rgba(0,0,0,0.55);
 }
 
-#car{
+.car{
   position:absolute;
   left:10px;
-  top:90px;
-  font-size:40px;
-  transition: left 0.2s;
+  font-size:32px;
+  transition:left 0.15s linear;
 }
+
+#car1{ top:60px; }
+#car2{ top:100px; }
+#car3{ top:140px; }
 
 #finish{
   position:absolute;
   right:0;
-  width:12px;
+  width:14px;
   height:100%;
-  background:repeating-linear-gradient(
+  background: repeating-linear-gradient(
     45deg,
     white,
     white 10px,
@@ -61,59 +64,100 @@ h1{
   );
 }
 
-#hud{
+#countdown{
+  font-size:40px;
+  font-weight:bold;
   margin-top:10px;
-  font-size:18px;
 }
 
-#startBtn{
-  padding:14px 22px;
+button{
+  padding:14px 24px;
   font-size:18px;
   border:none;
   border-radius:8px;
   cursor:pointer;
+}
+
+#message{
+  font-size:20px;
+  margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🏁 Mini Carrera F1</h1>
-<p>Toca la pantalla para acelerar</p>
+<h1>🏁 Carrera Especial</h1>
+<div id="countdown">Presiona iniciar</div>
 
 <div id="game">
-  <div class="track-line"></div>
-  <div id="car">🏎️</div>
+  <div class="overlay"></div>
+
+  <div id="car1" class="car">🏎️</div>
+  <div id="car2" class="car">🚗</div>
+  <div id="car3" class="car">🚙</div>
+
   <div id="finish"></div>
 </div>
 
-<div id="hud">
-Tiempo: <span id="time">0.0</span>s
-</div>
-
-<br>
-<button id="startBtn">Iniciar Carrera</button>
+<button onclick="startRace()">Iniciar carrera</button>
 
 <p id="message"></p>
 
 <script>
-let position = 10;
+const nombre = "Valeria"; // CAMBIA AQUI EL NOMBRE
+
 let gameRunning = false;
-let startTime;
+let playerPos = 10;
+let ai1 = 10;
+let ai2 = 10;
+let finish = 360;
 
-const car = document.getElementById("car");
-const message = document.getElementById("message");
-const timeText = document.getElementById("time");
-const finish = 360;
+let engineContext;
 
-document.getElementById("startBtn").onclick = startGame;
+function engineSound(){
+  if(!engineContext){
+    engineContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
 
-function startGame(){
-  position = 10;
-  car.style.left = position + "px";
-  message.innerText = "";
-  gameRunning = true;
-  startTime = Date.now();
+  const osc = engineContext.createOscillator();
+  const gain = engineContext.createGain();
+
+  osc.type = "sawtooth";
+  osc.frequency.value = 120 + Math.random()*80;
+
+  gain.gain.value = 0.05;
+
+  osc.connect(gain);
+  gain.connect(engineContext.destination);
+
+  osc.start();
+  osc.stop(engineContext.currentTime + 0.1);
+}
+
+function startRace(){
+  playerPos = 10;
+  ai1 = 10;
+  ai2 = 10;
+
+  updateCars();
+
+  let count = 3;
+  document.getElementById("countdown").innerText = count;
+
+  const interval = setInterval(()=>{
+    count--;
+    if(count > 0){
+      document.getElementById("countdown").innerText = count;
+    } else if(count === 0){
+      document.getElementById("countdown").innerText = "GO!";
+    } else {
+      clearInterval(interval);
+      document.getElementById("countdown").innerText = "Toca la pantalla para acelerar";
+      gameRunning = true;
+      aiMove();
+    }
+  },1000);
 }
 
 document.addEventListener("touchstart", accelerate);
@@ -122,16 +166,44 @@ document.addEventListener("click", accelerate);
 function accelerate(){
   if(!gameRunning) return;
 
-  position += 18;
-  car.style.left = position + "px";
+  playerPos += 20;
+  engineSound();
+  updateCars();
+  checkWin();
+}
 
-  let time = ((Date.now() - startTime)/1000).toFixed(2);
-  timeText.innerText = time;
+function aiMove(){
+  const aiInterval = setInterval(()=>{
+    if(!gameRunning){
+      clearInterval(aiInterval);
+      return;
+    }
 
-  if(position >= finish){
+    ai1 += Math.random()*12;
+    ai2 += Math.random()*14;
+
+    updateCars();
+    checkWin();
+  },200);
+}
+
+function updateCars(){
+  document.getElementById("car1").style.left = playerPos + "px";
+  document.getElementById("car2").style.left = ai1 + "px";
+  document.getElementById("car3").style.left = ai2 + "px";
+}
+
+function checkWin(){
+  if(playerPos >= finish){
     gameRunning = false;
-    message.innerHTML =
-    "🏆 Ganaste la carrera!<br><br>Ahora el premio es salir conmigo a ver F1 😉";
+    document.getElementById("message").innerHTML =
+    "🏆 "+nombre+" ganaste mi carrera favorita.<br>Ahora te debo una cita para ver F1 juntos 😉";
+  }
+
+  if(ai1 >= finish || ai2 >= finish){
+    gameRunning = false;
+    document.getElementById("message").innerHTML =
+    "Casi ganamos 😅 revancha conmigo "+nombre;
   }
 }
 </script>
