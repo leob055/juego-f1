@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carrera F1 Especial</title>
+<title>Carrera F1</title>
 
 <style>
 body{
@@ -27,7 +27,6 @@ h1{
   border-radius:12px;
   overflow:hidden;
   border:4px solid white;
-
   background-image:url("https://upload.wikimedia.org/wikipedia/commons/7/7a/Start_grid_Silverstone_2014.jpg");
   background-size:cover;
   background-position:center;
@@ -41,9 +40,9 @@ h1{
 
 .car{
   position:absolute;
-  left:10px;
+  right:10px;
   font-size:32px;
-  transition:left 0.15s linear;
+  transition:right 0.15s linear;
 }
 
 #car1{ top:60px; }
@@ -52,7 +51,7 @@ h1{
 
 #finish{
   position:absolute;
-  right:0;
+  left:0;
   width:14px;
   height:100%;
   background: repeating-linear-gradient(
@@ -87,15 +86,15 @@ button{
 
 <body>
 
-<h1>🏁 Carrera Especial</h1>
+<h1>🏁 Carrera de F1</h1>
 <div id="countdown">Presiona iniciar</div>
 
 <div id="game">
   <div class="overlay"></div>
 
   <div id="car1" class="car">🏎️</div>
-  <div id="car2" class="car">🚗</div>
-  <div id="car3" class="car">🚙</div>
+  <div id="car2" class="car">🏎️</div>
+  <div id="car3" class="car">🏎️</div>
 
   <div id="finish"></div>
 </div>
@@ -105,7 +104,7 @@ button{
 <p id="message"></p>
 
 <script>
-const nombre = "Valeria"; // CAMBIA AQUI EL NOMBRE
+const nombre = "Valeria";
 
 let gameRunning = false;
 let playerPos = 10;
@@ -124,7 +123,7 @@ function engineSound(){
   const gain = engineContext.createGain();
 
   osc.type = "sawtooth";
-  osc.frequency.value = 120 + Math.random()*80;
+  osc.frequency.value = 120 + Math.random()*90;
 
   gain.gain.value = 0.05;
 
@@ -132,7 +131,7 @@ function engineSound(){
   gain.connect(engineContext.destination);
 
   osc.start();
-  osc.stop(engineContext.currentTime + 0.1);
+  osc.stop(engineContext.currentTime + 0.08);
 }
 
 function startRace(){
@@ -166,7 +165,7 @@ document.addEventListener("click", accelerate);
 function accelerate(){
   if(!gameRunning) return;
 
-  playerPos += 20;
+  playerPos += 18;
   engineSound();
   updateCars();
   checkWin();
@@ -188,16 +187,16 @@ function aiMove(){
 }
 
 function updateCars(){
-  document.getElementById("car1").style.left = playerPos + "px";
-  document.getElementById("car2").style.left = ai1 + "px";
-  document.getElementById("car3").style.left = ai2 + "px";
+  document.getElementById("car1").style.right = playerPos + "px";
+  document.getElementById("car2").style.right = ai1 + "px";
+  document.getElementById("car3").style.right = ai2 + "px";
 }
 
 function checkWin(){
   if(playerPos >= finish){
     gameRunning = false;
     document.getElementById("message").innerHTML =
-    "🏆 "+nombre+" ganaste mi carrera favorita.<br>Ahora te debo una cita para ver F1 juntos 😉";
+    "🏆 "+nombre+" ganaste la carrera.<br>Ahora toca ver una F1 juntos 😉";
   }
 
   if(ai1 >= finish || ai2 >= finish){
@@ -207,6 +206,9 @@ function checkWin(){
   }
 }
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
