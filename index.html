@@ -51,29 +51,6 @@ padding:20px;
 box-shadow:0 15px 40px rgba(0,0,0,.5);
 }
 
-/* TEAM SELECT */
-
-.teams{
-display:flex;
-gap:10px;
-margin-bottom:15px;
-}
-
-.team{
-flex:1;
-padding:12px;
-border-radius:10px;
-cursor:pointer;
-font-weight:600;
-}
-
-.ferrari{background:#dc2626}
-.redbull{background:#1d4ed8}
-
-.team.selected{
-outline:3px solid white;
-}
-
 /* LIGHTS */
 
 .lights{
@@ -139,9 +116,11 @@ black 20px
 );
 }
 
+/* AUTOS */
+
 .car{
 position:absolute;
-font-size:34px;
+font-size:36px;
 transition:left .12s linear;
 }
 
@@ -177,12 +156,37 @@ opacity:.9;
 display:none;
 position:fixed;
 inset:0;
-background:
-linear-gradient(135deg,#ff4fa3,#ff7ac6,#ffa3d1);
+background:linear-gradient(135deg,#ff4fa3,#ff7ac6,#ffa3d1);
 justify-content:center;
 align-items:center;
 padding:30px;
 text-align:center;
+overflow:hidden;
+}
+
+/* BANDERAS A CUADROS */
+
+.flags{
+position:absolute;
+inset:0;
+pointer-events:none;
+}
+
+.flag{
+position:absolute;
+font-size:40px;
+animation:flagWave 1s infinite ease-in-out;
+}
+
+.flag.left{left:20px;top:20px}
+.flag.right{right:20px;top:20px}
+.flag.bottomLeft{left:20px;bottom:20px}
+.flag.bottomRight{right:20px;bottom:20px}
+
+@keyframes flagWave{
+0%{transform:rotate(-10deg)}
+50%{transform:rotate(10deg)}
+100%{transform:rotate(-10deg)}
 }
 
 .finalCard{
@@ -192,6 +196,12 @@ padding:30px;
 border-radius:20px;
 max-width:320px;
 box-shadow:0 20px 60px rgba(0,0,0,.4);
+animation:pop 0.6s ease;
+}
+
+@keyframes pop{
+from{transform:scale(.7);opacity:0}
+to{transform:scale(1);opacity:1}
 }
 
 .finalTitle{
@@ -218,13 +228,7 @@ Race Weekend
 <div class="container">
 <div class="card">
 
-<h2>Elige tu equipo</h2>
-<h4>luego de presionar iniciar, preciona varias veces la pista para q aparezcan los autos</h4>
-  
-<div class="teams">
-<div class="team ferrari" onclick="selectTeam('ferrari')" id="teamFerrari">Ferrari</div>
-<div class="team redbull" onclick="selectTeam('redbull')" id="teamRedbull">Red Bull</div>
-</div>
+<h2>🏎️ Carrera contra mí</h2>
 
 <div class="lights">
 <div class="light"></div>
@@ -236,8 +240,10 @@ Race Weekend
 
 <div id="game">
 <div class="track"></div>
+
 <div id="player" class="car">🏎️</div>
-<div id="ai" class="car">🏎️</div>
+<div id="ai" class="car">🔵🏎️</div>
+
 <div class="finish"></div>
 </div>
 
@@ -252,16 +258,24 @@ Race Weekend
 </div>
 
 <div id="finalScreen">
+
+<div class="flags">
+<div class="flag left">🏁</div>
+<div class="flag right">🏁</div>
+<div class="flag bottomLeft">🏁</div>
+<div class="flag bottomRight">🏁</div>
+</div>
+
 <div class="finalCard">
 <div class="finalTitle">🏁 Carrera terminada</div>
 <div class="finalText" id="finalMessage"></div>
 </div>
+
 </div>
 
 <script>
 const nombre="Fernanda";
 
-let team="ferrari";
 let playerPos,aiPos;
 let running=false;
 let startTime;
@@ -271,15 +285,6 @@ const finish=20;
 
 const player=document.getElementById("player");
 const ai=document.getElementById("ai");
-
-/* TEAM SELECT */
-
-function selectTeam(t){
-team=t;
-document.querySelectorAll(".team").forEach(e=>e.classList.remove("selected"));
-document.getElementById("teamFerrari").classList.toggle("selected",t==="ferrari");
-document.getElementById("teamRedbull").classList.toggle("selected",t==="redbull");
-}
 
 /* ENGINE SOUND */
 
