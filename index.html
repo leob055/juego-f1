@@ -388,7 +388,7 @@ function aiMove(){
 const aiInterval=setInterval(()=>{
 if(!running){clearInterval(aiInterval);return;}
 
-aiPos-=Math.random()*16;
+aiPos -= 22 + Math.random()*12;
 ai.style.left=aiPos+"px";
 checkWin();
 
