@@ -3,171 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carrera F1</title>
+<title>Mini F1 Game</title>
 
 <style>
 body{
-  margin:0;
-  font-family: system-ui, -apple-system, Arial;
-  background: linear-gradient(135deg,#0f172a,#020617);
-  color:white;
-  text-align:center;
+margin:0;
+font-family:system-ui,Arial;
+background:linear-gradient(135deg,#020617,#0f172a);
+color:white;
+text-align:center;
 }
 
+/* INTRO */
+
+#intro{
+position:fixed;
+inset:0;
+background:black;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+font-size:30px;
+letter-spacing:3px;
+animation:introAnim 2.5s forwards;
+z-index:10;
+}
+
+@keyframes introAnim{
+0%{opacity:1}
+80%{opacity:1}
+100%{opacity:0;visibility:hidden}
+}
+
+/* APP */
+
 .container{
-  max-width:430px;
-  margin:auto;
-  padding:20px;
+max-width:430px;
+margin:auto;
+padding:20px;
 }
 
 .card{
-  background:#0b1220;
-  border-radius:18px;
-  padding:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+background:#0b1220;
+border-radius:18px;
+padding:20px;
+box-shadow:0 15px 40px rgba(0,0,0,.5);
 }
 
-h1{
-  margin:10px 0 5px;
-  font-size:24px;
+/* TEAM SELECT */
+
+.teams{
+display:flex;
+gap:10px;
+margin-bottom:15px;
 }
 
-.subtitle{
-  opacity:.7;
-  font-size:14px;
-  margin-bottom:10px;
+.team{
+flex:1;
+padding:12px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
 }
 
-/* SEMAFORO F1 */
+.ferrari{background:#dc2626}
+.redbull{background:#1d4ed8}
+
+.team.selected{
+outline:3px solid white;
+}
+
+/* LIGHTS */
 
 .lights{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin:10px 0 15px;
+display:flex;
+justify-content:center;
+gap:8px;
+margin:10px 0;
 }
 
 .light{
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  background:#330000;
-  box-shadow:0 0 10px rgba(0,0,0,0.6) inset;
+width:16px;
+height:16px;
+border-radius:50%;
+background:#330000;
 }
 
 .light.on{
-  background:red;
-  box-shadow:0 0 10px red;
+background:red;
+box-shadow:0 0 10px red;
 }
 
 /* GAME */
 
 #game{
-  position:relative;
-  height:200px;
-  border-radius:12px;
-  overflow:hidden;
-  border:2px solid #334155;
-  background:#111;
+position:relative;
+height:200px;
+border-radius:12px;
+overflow:hidden;
+border:2px solid #334155;
+background:#111;
 }
-
-/* EFECTO VELOCIDAD */
 
 .track{
-  position:absolute;
-  inset:0;
-  background:
-    repeating-linear-gradient(
-      to right,
-      #222 0px,
-      #222 40px,
-      #2f2f2f 40px,
-      #2f2f2f 80px
-    );
-  animation: moveTrack 1s linear infinite;
-  opacity:.6;
+position:absolute;
+inset:0;
+background:
+repeating-linear-gradient(
+to right,
+#1f1f1f 0px,
+#1f1f1f 40px,
+#2b2b2b 40px,
+#2b2b2b 80px
+);
+animation:trackMove .8s linear infinite;
 }
 
-@keyframes moveTrack{
-  from{ transform:translateX(0); }
-  to{ transform:translateX(-80px); }
+@keyframes trackMove{
+from{transform:translateX(0)}
+to{transform:translateX(-80px)}
 }
 
 .finish{
-  position:absolute;
-  left:8px;
-  width:16px;
-  height:100%;
-  background: repeating-linear-gradient(
-    45deg,
-    white,
-    white 10px,
-    black 10px,
-    black 20px
-  );
+position:absolute;
+left:8px;
+width:16px;
+height:100%;
+background:repeating-linear-gradient(
+45deg,
+white,
+white 10px,
+black 10px,
+black 20px
+);
 }
-
-/* AUTOS */
 
 .car{
-  position:absolute;
-  font-size:34px;
-  transition:left .15s linear;
+position:absolute;
+font-size:34px;
+transition:left .12s linear;
 }
 
-#player{ top:70px; }
-#ai{ top:130px; }
+#player{top:70px}
+#ai{top:130px}
 
-/* COLORES EQUIPOS */
-
-.redbull{
-  filter:hue-rotate(200deg) saturate(1.3);
-}
-
-.ferrari{
-  filter:hue-rotate(-20deg) saturate(1.5);
-}
-
-/* BOTON */
+/* BUTTON */
 
 button{
-  margin-top:15px;
-  width:100%;
-  padding:14px;
-  font-size:16px;
-  border:none;
-  border-radius:10px;
-  background:#2563eb;
-  color:white;
-  font-weight:600;
+margin-top:12px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+font-weight:600;
+font-size:16px;
+background:#2563eb;
+color:white;
+}
+
+/* LEADERBOARD */
+
+.leaderboard{
+margin-top:15px;
+text-align:left;
+font-size:14px;
+opacity:.9;
 }
 
 /* FINAL SCREEN */
 
 #finalScreen{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:linear-gradient(135deg,#ff4fa3,#ff7ac6);
-  color:white;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  font-size:26px;
-  padding:30px;
+display:none;
+position:fixed;
+inset:0;
+background:
+linear-gradient(135deg,#ff4fa3,#ff7ac6,#ffa3d1);
+justify-content:center;
+align-items:center;
+padding:30px;
+text-align:center;
+}
+
+.finalCard{
+background:white;
+color:#111;
+padding:30px;
+border-radius:20px;
+max-width:320px;
+box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+.finalTitle{
+font-size:26px;
+margin-bottom:10px;
+}
+
+.finalText{
+font-size:18px;
+line-height:1.4;
 }
 </style>
 </head>
 
 <body>
 
+<div id="intro">
+🏁 FORMULA 1
+<div style="font-size:14px;opacity:.6;margin-top:10px">
+Race Weekend
+</div>
+</div>
+
 <div class="container">
 <div class="card">
 
-<h1>🏁 Carrera de F1</h1>
-<div class="subtitle">Toca la pantalla para acelerar</div>
+<h2>Elige tu equipo</h2>
 
-<div class="lights" id="lights">
+<div class="teams">
+<div class="team ferrari" onclick="selectTeam('ferrari')" id="teamFerrari">Ferrari</div>
+<div class="team redbull" onclick="selectTeam('redbull')" id="teamRedbull">Red Bull</div>
+</div>
+
+<div class="lights">
 <div class="light"></div>
 <div class="light"></div>
 <div class="light"></div>
@@ -177,116 +235,178 @@ button{
 
 <div id="game">
 <div class="track"></div>
-
-<div id="player" class="car redbull">🏎️</div>
-<div id="ai" class="car ferrari">🏎️</div>
-
+<div id="player" class="car">🏎️</div>
+<div id="ai" class="car">🏎️</div>
 <div class="finish"></div>
 </div>
 
 <button onclick="startRace()">Iniciar carrera</button>
 
+<div class="leaderboard">
+<b>Mejores tiempos</b>
+<div id="times"></div>
+</div>
+
 </div>
 </div>
 
-<div id="finalScreen"></div>
+<div id="finalScreen">
+<div class="finalCard">
+<div class="finalTitle">🏁 Carrera terminada</div>
+<div class="finalText" id="finalMessage"></div>
+</div>
+</div>
 
 <script>
-const nombre = "Valeria";
+const nombre="Valeria";
 
-let playerPos;
-let aiPos;
-let gameRunning=false;
-let finish=20;
+let team="ferrari";
+let playerPos,aiPos;
+let running=false;
+let startTime;
+
 const width=380;
+const finish=20;
 
 const player=document.getElementById("player");
 const ai=document.getElementById("ai");
 
+/* TEAM SELECT */
+
+function selectTeam(t){
+team=t;
+document.querySelectorAll(".team").forEach(e=>e.classList.remove("selected"));
+document.getElementById("teamFerrari").classList.toggle("selected",t==="ferrari");
+document.getElementById("teamRedbull").classList.toggle("selected",t==="redbull");
+}
+
+/* ENGINE SOUND */
+
+let ctx;
+function engine(){
+if(!ctx) ctx=new (window.AudioContext||window.webkitAudioContext)();
+const osc=ctx.createOscillator();
+const gain=ctx.createGain();
+
+osc.type="sawtooth";
+osc.frequency.value=120+Math.random()*120;
+
+gain.gain.value=0.06;
+
+osc.connect(gain);
+gain.connect(ctx.destination);
+
+osc.start();
+osc.stop(ctx.currentTime+0.07);
+}
+
+/* START */
+
 function startRace(){
-  resetLights();
-  startLightsSequence();
+startLights();
 }
 
-function resetLights(){
-  document.querySelectorAll(".light").forEach(l=>l.classList.remove("on"));
+function startLights(){
+const lights=document.querySelectorAll(".light");
+let i=0;
+
+const interval=setInterval(()=>{
+lights[i].classList.add("on");
+i++;
+
+if(i===lights.length){
+clearInterval(interval);
+setTimeout(beginRace,600);
+}
+},400);
 }
 
-function startLightsSequence(){
-  const lights=document.querySelectorAll(".light");
-  let i=0;
+function beginRace(){
+document.querySelectorAll(".light").forEach(l=>l.classList.remove("on"));
 
-  const interval=setInterval(()=>{
-    lights[i].classList.add("on");
-    i++;
+playerPos=width;
+aiPos=width;
 
-    if(i===lights.length){
-      clearInterval(interval);
-      setTimeout(startRaceNow,700);
-    }
-  },400);
+player.style.left=playerPos+"px";
+ai.style.left=aiPos+"px";
+
+running=true;
+startTime=Date.now();
+
+aiMove();
 }
 
-function startRaceNow(){
-  document.querySelectorAll(".light").forEach(l=>l.classList.remove("on"));
+/* MOVEMENT */
 
-  playerPos=width;
-  aiPos=width;
-
-  player.style.left=playerPos+"px";
-  ai.style.left=aiPos+"px";
-
-  gameRunning=true;
-  aiMove();
-}
-
-document.addEventListener("touchstart", accelerate);
-document.addEventListener("click", accelerate);
+document.addEventListener("touchstart",accelerate);
+document.addEventListener("click",accelerate);
 
 function accelerate(){
-  if(!gameRunning) return;
+if(!running) return;
 
-  playerPos-=20;
-  player.style.left=playerPos+"px";
-  checkWin();
+playerPos-=20;
+engine();
+player.style.left=playerPos+"px";
+checkWin();
 }
 
 function aiMove(){
-  const aiInterval=setInterval(()=>{
-    if(!gameRunning){
-      clearInterval(aiInterval);
-      return;
-    }
+const aiInterval=setInterval(()=>{
+if(!running){clearInterval(aiInterval);return;}
 
-    aiPos-=Math.random()*16;
-    ai.style.left=aiPos+"px";
-    checkWin();
-  },180);
+aiPos-=Math.random()*16;
+ai.style.left=aiPos+"px";
+checkWin();
+
+},180);
 }
 
+/* WIN */
+
 function checkWin(){
-  if(playerPos<=finish){
-    endGame(true);
-  }
-  if(aiPos<=finish){
-    endGame(false);
-  }
+if(playerPos<=finish) endGame(true);
+if(aiPos<=finish) endGame(false);
 }
 
 function endGame(win){
-  gameRunning=false;
+running=false;
 
-  const screen=document.getElementById("finalScreen");
-  screen.style.display="flex";
+let time=((Date.now()-startTime)/1000).toFixed(2);
+saveTime(time);
 
-  if(win){
-    screen.innerHTML=
-    "🏁 "+nombre+" ganaste mi carrera favorita.<br><br>¿Salimos a ver F1 juntos? 💗";
-  }else{
-    screen.innerHTML=
-    nombre+" casi ganamos 😅<br><br>pero igual quiero invitarte a ver F1 conmigo 💗";
-  }
+const screen=document.getElementById("finalScreen");
+screen.style.display="flex";
+
+const msg=document.getElementById("finalMessage");
+
+if(win){
+msg.innerHTML=
+"<b>"+nombre+"</b>, ganaste la carrera 💗<br><br>Ahora me debes ir a ver una carrera de F1 conmigo 🏎️";
+}else{
+msg.innerHTML=
+"Casi ganamos 😅<br><br>Pero igual quiero invitarte a ver F1 conmigo 💗";
 }
+
+loadTimes();
+}
+
+/* LEADERBOARD */
+
+function saveTime(t){
+let times=JSON.parse(localStorage.getItem("f1times")||"[]");
+times.push(t);
+times.sort((a,b)=>a-b);
+times=times.slice(0,5);
+localStorage.setItem("f1times",JSON.stringify(times));
+}
+
+function loadTimes(){
+let times=JSON.parse(localStorage.getItem("f1times")||"[]");
+document.getElementById("times").innerHTML=
+times.map(t=>"🏁 "+t+"s").join("<br>");
+}
+
+loadTimes();
 </script>
 
 </body>
